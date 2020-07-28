@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <script>function text() {
+
+        let name = document.querySelector("#name").value;
+        if (name === "") {
+            name = "World"
+        }
+        document.querySelector("#text").innerHTML = "Hello, " + name + "! Thank you for visiting my website.Since you are reading this, Please Smile. Your look beautiful when you smile :-)"
+    }
+    </script>
+    <title>Syed Fasih Uddin | Homepage</title>
+</head>
+<body>
+<div id="head">
+    <h1>Syed Fasih Uddin | Website for CS50!</h1>
+</div>
+<div id="navigator">
+    <table>
+
+        <th><a href="index.html">Home</a></th>
+        <td><a href="about-me.html">About Me</a></td>
+        <td><a href="contact-me.html">Contact Me</a></td>
+        <td><a href="why-cs50.html">Why CS50?</a></td>
+    </table>
+</div>
+
+<div id="content">
+    <h2>Welcome To My Temporary Website!</h2>
+    <form onsubmit="text(); return false;">
+        <h4>Enter Your Name :</h4>
+        <input type="text" id="name">
+        <button type="submit">Click Me</button>
+    </form>
+
+    <p id="text"></p>
+</div>
+
+</body>
+</html>
