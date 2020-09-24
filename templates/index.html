@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Symbol</th>
+            <th scope="col">Name</th>
+            <th scope="col">Shares</th>
+            <th scope="col">Current Value/Share</th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+
+        {% for row in data %}
+            <tr>
+                <th scope="row">{{ row["count"] }}</th>
+                <td>{{ row["symbol"] }}</td>
+                <td>{{ row["current_data"]["name"] }}</td>
+                <td>{{ row["quantity"] }}</td>
+                <td>{{ row["current_data"]["price"] }}</td>
+                <td>{{ row["current_data"]["total"] }}</td>
+            </tr>
+
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td>CASH</td>
+            <td></td>
+            <td></td>
+            <td>{{ cash }}
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <th>{{ g_total }}</th>
+        </tr>
+    </table>
+
+
+
+
+{% endblock %}
