@@ -1,0 +1,97 @@
+/* Scss Document */
+body{
+overflow-x: hidden;		
+
+}
+
+
+#google-logo{
+	height: 33px;
+	
+	align-self: center;
+	
+}
+
+
+
+#navbar {
+	height: 55px;
+}
+
+#title label {
+	font-size: 20px;
+	font-weight: 500;
+	font-family: Cambria, 'Hoefler Text', 'Liberation Serif', Times, 'Times New Roman', 'serif';
+	color:#d93025;
+}
+
+form div label {
+	font-family: ariel,sans-serif;
+	color: #222;
+	
+}
+
+
+
+.help-text {
+	
+	font-size: 11px;
+	color: #555;
+	
+}
+
+
+.btn-outline-primary {
+	
+	background-color: #4d90fe;
+	color: #fff;
+	
+}
+
+#navbar, #last-pane {
+	
+	background-color:#f2f2f2;
+	color: #5f6368;
+	font-family: ariel, sans-serif;
+	font-size: 15px;
+
+	
+	
+}
+#title,#navbar, #last-pane {
+	border: 0.2px solid #bfbfbf;
+}
+
+
+
+#last-pane {
+	
+
+	height: 5.5vh;
+	bottom: 2px;
+	position:absolute;
+	@media (max-width:380px){
+		position: inherit;
+	}
+	
+	
+
+	
+	
+	a{
+	
+	color: #5f6368;
+	padding: 5px 6px;
+	font-size: 14px;
+	font-family: arial, "sans-serif";
+		
+	}
+}
+
+#second-last-pane{
+	padding: 5px 4px;
+}
+
+#last-pane {
+	
+}
