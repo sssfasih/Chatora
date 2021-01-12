@@ -1,0 +1,42 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center" id="heading">Create an Entry</h1>
+    <div class="container mr-5 pr-5">
+    <form action="{% url 'create' %}" method="POST" id="form">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Enter Title</label>
+            <input type="text" class="form-control" id="title" placeholder="" name="title">
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Enter Content</label>
+            <textarea class="form-control" id="content" rows="5" name="content"></textarea>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-secondary" id="button">Submit Entry</button>
+        </div>
+        </form>
+    </div>
+
+<script>
+var editMode = '{{editMode}}'
+if ( editMode == "True"){
+    var content = `{{ content|safe }}`
+    console.log(content);
+    document.getElementById('form').action = "{% url 'edit' title %}";
+    document.getElementById('heading').innerText = "Edit an Entry";
+    document.getElementById('title').disabled = true;
+    document.getElementById('title').value = '{{title}}' ;
+    document.getElementById('content').value = content ;
+    document.getElementById('button').innerText = 'Edit' ;
+
+}
+
+</script>
+
+{% endblock %}
