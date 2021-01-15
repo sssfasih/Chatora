@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+<ul>
+    {% for i in products %}
+    <li>Name: {{ i.name }}, Owner: {{ i.owner }},Category: {{ i.cat_id }}</li>
+
+        {% empty %}
+        <li>Empty products list</li>
+
+    {% endfor %}
+    </ul>
+{% endblock %}
