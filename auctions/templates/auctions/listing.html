@@ -1,0 +1,35 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+<h1>Product Details</h1>
+
+    <div class="card col-6">
+        <div class="container h-75">
+        <img src="{{ product.image }}" class="card-img-top img img-fluid h-100" alt="...">
+    </div>
+    <div class="card-body">
+
+    <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text"></p>
+    <h6 class="card-text text-muted">By: {{ i.owner }}</h6>
+    <p class="card-text">{{ product.desc }}</p>
+    <b class="card-text">Rs. {{ product.highest}} /-</b>
+     <a href="{% url 'index' %}"><button type="button" class="btn btn-secondary">Back</button></a>
+  </div>
+</div>
+    Name: ,
+    Owner: {{ product.owner }},
+    Category: {{ product.cat_id }}
+    Current Price: {{ product.higest }},
+    Image: <img src="{{ product.image }}" height="200px">,
+    description: {{ product.desc }}
+    Highest bid: {{ product.highest }}
+    Currently winning: {{ product.winner }}
+    Currently Active? {{ product.active }}
+
+
+<a href="{% url 'index' %}">Back</a>
+
+
+{% endblock %}
