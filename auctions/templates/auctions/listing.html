@@ -1,0 +1,68 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+    <h1 class="text-center">Product Details</h1>
+    <div class="container d-flex">
+        <div class="card col-6">
+            <div class="container">
+                <img src="{{ product.image }}" class="card-img-top img img-fluid h-100" alt="...">
+            </div>
+
+        </div>
+        <div class="card col-6">
+            <div class="card-body">
+
+                <h3 class="card-title">{{ product.name }}</h3>{% if product.active %}
+                <button class="btn-success" style="border-radius: 50px;"> Active</button>{% else %}
+                <button class="btn-danger" style="border-radius: 50px;"> Closed</button>{% endif %}
+                <p class="card-text">Category: {{ product.cat_id }}</p>
+                <h6 class="card-text text-muted">By: {{ product.owner }}</h6>
+                <p class="card-text">{{ product.desc }}</p>
+                {% if product.winner and not product.active %}
+                    Congrats! <b>{{ product.winner }}</b> has won the auction</br>
+                    for price <b class="card-text"> Rs. {{ product.highest }} /-</b>
+                {% elif product.winner %}
+                    Highest bid:<b class="card-text"> Rs. {{ product.highest }} /-</b> by {{ product.winner }}
+                {% else %}
+                    Price:<b class="card-text"> Rs. {{ product.highest }} /-</b>
+                {% endif %}
+
+                {% if product.active %}
+                    <form class="row card-text mt-2 ">
+                        <input type="number" class="me-2 col-3 text-center" min="{{ product.highest }}">
+                        <button type="submit" class="btn btn-secondary col-2">Bid</button>
+                    </form>
+                {% endif %}
+                            {% if user.is_authenticated %}
+                            {% if inWatchlist  %}
+                                <form action="{% url 'removeWatch' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary mt-3">Remove from Watchlist</button>
+                    </form>
+                            {% else %}
+                    <form action="{% url 'addWatch' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary mt-3">Add to Watchlist</button>
+                    </form>
+                            {% endif %}
+                            {% endif %}
+
+
+                {% if user.username|striptags == product.owner|striptags and product.active %}
+                    <form action="{% url 'close' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary mt-3">Close Auction</button>
+                    </form>
+                {% endif %}
+
+                <a href="{% url 'index' %}">
+                    <button type="button" class="btn btn-secondary mt-3">Back</button>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+{% endblock %}
