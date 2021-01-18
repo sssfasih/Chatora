@@ -1,0 +1,33 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+
+    <div class="container">
+
+    <div class="card-header">
+        Your Watch List
+    </div>
+        {% for i in watchlist %}
+    <div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ i.name}}</h5>
+        >Status:{% if i.active %}
+                <button class="btn-success" style="border-radius: 50px;"> Active</button>{% else %}
+                <button class="btn-danger" style="border-radius: 50px;"> Closed</button>{% endif %}
+        <p class="card-text">By: {{ i.owner }}</p>
+
+        <a href="{% url 'removeWatch' i.id %}" class="btn btn-secondary">Remove From Watchlist</a>
+        <a href="{% url 'listing' i.id %}" class="btn btn-secondary">View Details</a>
+    </div>
+    </div>
+            {% empty %}
+            <div class="card">
+    <div class="card-body text-center">
+        <h5 class="card-title">Your watchlist is empty</h5>
+
+        <a href="{% url 'index' %}" class="btn-secondary btn">Back to homepage</a>
+    </div>
+    </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
