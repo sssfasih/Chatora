@@ -1,0 +1,87 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+
+    <!-- New Post -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">New Post</h5>
+            <form method="POST" action="{% url 'create_post' %}">
+                {% csrf_token %}
+                <textarea class="card-text form-control" name="post_text" placeholder="What's on your mind?"
+                          rows="3"></textarea>
+                <button class="form-control btn btn-primary">Post</button>
+            </form>
+        </div>
+    </div>
+    <!-- New Post Section end -->
+    <h3 class="text-center my-2">{{ title }}</h3>
+    {% for loop in posts %}
+        <div class="card">
+            <div class="card-header d-flex" style="border: none;">
+                <span class="mr-auto">
+                <b>{{ loop.posted_by.first_name }}</b> ({{ loop.posted_by.username }})</span>
+
+                <div class="btn-group dropleft">
+                    <div data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                        </svg>
+                    </div>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item edit" id="edit-{{ loop.id }}">Edit Post</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <div><p id="text-{{ loop.id }}">{{ loop.text }}.</p></div>
+                    <footer class="blockquote-footer">Likes: <cite
+                            title="Source Title">{{ loop.likes.all|length }}</cite></footer>
+                    <footer class="blockquote-footer">at <cite title="Source Title">{{ loop.created }}</cite>
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+    {% empty %}
+        <div class="container text-center my-4"><h3>Could not find posts.</h3>
+            <h4>Please Follow more people to see posts.</h4></div>
+    {% endfor %}
+
+    <!-- Paginator start -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+                </li>
+
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-disabled="true">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for number in paginator.page_range %}
+                <li class="page-item"><a class="page-link" href="?page={{ number }}">{{ number }}</a></li>
+            {% endfor %}
+
+            {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+                </li>
+
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-disabled="true">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <!-- Paginator end -->
+
+{% endblock %}
