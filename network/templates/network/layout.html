@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Social Network{% endblock %}</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+
+    <script type="text/javascript">
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function submitEdittedPost(editId, pParent) {
+            var editedText = document.querySelector('#edited_text-' + editId).value;
+            //const CSRFToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            const CSRFToken = getCookie('csrftoken');
+            var url = "{% url 'edit_post' post_id=12345 %}".replace(/12345/, editId);
+            var updated = ""
+
+            //console.log("NEW TEXT");
+            //console.log(editedText);
+            //console.log(CSRFToken);
+            fetch(url, {
+                method: "POST",
+                headers: {"X-CSRFToken": CSRFToken},
+                body: JSON.stringify({"editedText": editedText})
+
+            })
+                .then(response => {
+                    return response.json()
+                })
+                .then((data) => {
+                    updated = data.Updated;
+                    pParent.innerHTML = `<p id="text-${editId}">${updated}</p>`;
+
+
+                    return true
+                })
+
+            return updated
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.edit').forEach(item => {
+
+                item.addEventListener('click', () => {
+                    var editId = item.id;
+                    editId = editId.slice(5,);
+                    var textId = "text-" + editId;
+
+                    const pTag = document.querySelector("#" + textId);
+                    const pParent = pTag.parentElement;
+
+                    pParent.innerHTML = `<form class="editForm" method="POST" id="form-${editId}">
+                {% csrf_token %}
+                <textarea id="edited_text-${editId}" class="card-text form-control" name="edited_text" placeholder="What's on your mind?"
+                          rows="3">${pTag.innerText}</textarea>
+                <button id="sub-${editId}" class="form-control btn btn-primary eDone">Edit Post</button>
+            </form>`;
+
+                    // Adding event listener to all forms with editForm Class
+                    document.querySelectorAll('.editForm').forEach(item => {
+                        item.addEventListener('submit', (event) => {
+                            event.preventDefault();
+                            document.querySelector('#sub-' + editId).disabled = true;
+                            submitEdittedPost(editId, pParent)
+
+
+                        })
+
+                    })
+
+                })
+            });
+
+        });
+    </script>
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="{% url 'index' %}">Fasih Book</a>
+
+    <div class="">
+        <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_profile' user.id %}"><strong>{{ user.username }}</strong></a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'favourites' %}">Following</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>
+
+<div class="body container-fluid">
+    {% block body %}
+    {% endblock %}
+</div>
+
+</body>
+
+</html>
