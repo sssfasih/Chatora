@@ -1,0 +1,80 @@
+{% extends 'chat/base.html' %}
+
+{% block all_chats %}
+    <div class="my-3">
+    <div class="my-3" style="height: 75vh">
+    <div id="all_messages" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column; ">
+    <a class="text-center" href="#">Send a new message</a>
+        {% for each_conv in all_conversations %}
+
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+
+    <h5 class="card-title">
+        {% for participant_name in each_conv.participants.all %}
+            {% if participant_name != user %}
+            {{ participant_name.first_name }}
+            {% endif %}
+        {% endfor %}
+    </h5>
+    <p class="card-text">{{each_conv.Messages.last.Text |slice:":17" }} ...</p>
+
+        </div>
+        </div>
+
+
+
+        {% endfor %}
+    </div>
+
+
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block conversation %}
+    <div class="my-3" style="height: 70vh">
+    <h4>Person</h4>
+    <div id="messages" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column-reverse; ">
+    {% for loop in 'fasih' %}
+
+        <div class="container my-3 text-white">
+            <span class="bg-secondary container py-2" style="border-radius: 50px;">Sample text message {{ loop }}.</span>
+        </div>
+
+
+        <div class="container my-3 text-white" style="text-align: right;">
+            <span class="bg-primary container py-2" style="border-radius: 50px;">Text message from user {{ loop }}.</span>
+        </div>
+
+
+
+
+
+
+
+        {% endfor %}
+    </div>
+
+
+        <div class="container">
+    <form class="d-flex">
+
+    <input type="text" name="txt" placeholder="Write your text here" class="form-control">
+    <button class="btn btn-primary" type="submit" style="border-radius: 100%;">S</button>
+
+    </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    window.onload=function () {
+     let messages = document.getElementById("messages");
+     messages.scrollTop = messages.scrollHeight;
+}
+
+</script>
+{% endblock %}
