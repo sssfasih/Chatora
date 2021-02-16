@@ -11,3 +11,8 @@ class Message(models.Model):
     Text = models.CharField(max_length=200)
     From = models.ForeignKey(User,on_delete=models.CASCADE,related_name='sender')
     To = models.ForeignKey(User,on_delete=models.CASCADE,related_name='receiver')
+
+class Conversation(models.Model):
+    participants = models.ManyToManyField(User,related_name='participant')
+    Messages = models.ManyToManyField(Message,related_name='texts')
+    Last_Updated = models.DateTimeField(auto_now=True)

@@ -56,16 +56,20 @@
     </div>
 </nav>
 <div class="container-fluid row mt-2">
-<div class="container col-3 bg-secondary">
-{% block all_chats %}
-    s
-{% endblock %}
+    <div class="container col-3" style="outline: 2px dashed black">
+        {% block all_chats %}
+            s
+        {% endblock %}
+    </div>
+    <div class="container col-9" style="outline: 2px dashed black; height: 88vh;">
+        {% block conversation %}
+            A
+        {% endblock %}
+    </div>
 </div>
-<div class="container col-9 bg-primary">{% block single_chat %}A{% endblock %}</div>
-</div>
-
-
 
 
 </body>
+{% block js %}
+{% endblock %}
 </html>

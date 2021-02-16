@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import User
+from .models import User,Message,Conversation
 import json
 
 # Create your views here.
@@ -13,7 +13,23 @@ import json
 def index(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
-    return render(request,'chat/base.html')
+    return HttpResponseRedirect(reverse('messages'))
+
+@login_required
+def messages(request):
+    user = request.user
+    With = request.POST.get('WITH')
+    #WITH = User.objects.get(pk=With)
+    conv = Message.objects.filter(From=user)
+    conv = conv.union(Message.objects.filter(To=user))
+    #print(conv)
+
+    con = Conversation.objects.filter(participants=user).order_by('-Last_Updated')
+    for each_con in con:
+        print(each_con.Messages.last())
+
+
+    return render(request,'chat/messages.html',{'all_conversations':con})
 
 
 
