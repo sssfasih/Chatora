@@ -1,0 +1,111 @@
+{% extends 'chat/base.html' %}
+{% block all_chats %}
+
+    <div class="my-3">
+    <div class="my-3" style="height: 75vh">
+    <div id="all_messages" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column; ">
+    <a class="text-center" href="#">Send a new message</a>
+        {% for each_conv in all_conversations %}
+
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+
+    <h5 class="card-title">
+        {% for participant_name in each_conv.participants.all %}
+            {% if participant_name != user %}
+            {{ participant_name.first_name }}
+            {% endif %}
+        {% endfor %}
+    </h5>
+    <p class="card-text">{{each_conv.Messages.last.Text |slice:":17" }} ...</p>
+
+        </div>
+        </div>
+
+
+
+        {% endfor %}
+    </div>
+
+
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block conversation %}
+    <div class="my-3" style="height: 70vh">
+    <h4>
+        {% for participant_name in all_conversations.first.participants.all %}
+            {% if participant_name != user %}
+            {{ participant_name.first_name }}
+            {% endif %}
+        {% endfor %}
+
+
+
+    </h4>
+    <div id="messages" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column-reverse; ">
+    {% for eachMsg in disp_msgs %}
+
+        {% if not eachMsg.From == user %}
+        <div class="container my-3 text-white">
+            <span class="bg-secondary container py-2" style="border-radius: 50px;">{{ eachMsg.Text }}</span>
+        </div>
+        {% else %}
+
+        <div class="container my-3 text-white" style="text-align: right;">
+            <span class="bg-primary container py-2" style="border-radius: 50px;">{{ eachMsg.Text }}</span>
+        </div>
+        {% endif %}
+
+
+        {% endfor %}
+    </div>
+
+
+        <div class="container">
+    <form class="d-flex">
+
+    <input type="text" id="{{ all_conversations.first.id }}" class="form-control msg" name="txt" placeholder="Write your text here">
+    <button class="btn btn-primary" class="send" type="submit" style="border-radius: 100%;"><i class="fas fa-paper-plane"></i></button>
+
+    </form>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+
+<script>
+document.querySelector("form").onsubmit = function(){
+    console.log("Submitted");
+    let msg = document.querySelector('.msg')
+    let txt = msg.value;
+    let convoID = msg.id
+    //console.log(txt);
+    //console.log(convoID);
+    const csrftoken = getCookie('csrftoken');
+    //console.log(csrftoken);
+
+    fetch('/send/'+convoID,{
+        method:"PUT",
+        headers: {'X-CSRFToken':csrftoken},
+        body: JSON.stringify({txt:txt,convoID:convoID})
+    })
+    .then(response => {
+                    return response.json();
+
+                })
+                .then(jsonresponse => {
+                    console.log(jsonresponse);
+                    let msgs = document.querySelector('#messages')
+                    msgs.innerHTML =`<div class="container my-3 text-white" style="text-align: right;">
+            <span class="bg-primary container py-2" style="border-radius: 50px;">${jsonresponse['up_txt']}</span>
+        </div>`+ msgs.innerHTML;
+
+
+                })
+    return false;
+}
+</script>
+{% endblock %}
