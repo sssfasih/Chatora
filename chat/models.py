@@ -10,7 +10,10 @@ class User(AbstractUser):
 class Message(models.Model):
     Text = models.CharField(max_length=200)
     From = models.ForeignKey(User,on_delete=models.CASCADE,related_name='sender')
-    To = models.ForeignKey(User,on_delete=models.CASCADE,related_name='receiver')
+    #To = models.ForeignKey(User,on_delete=models.CASCADE,related_name='receiver')
+
+    def __str__(self):
+        return f"Msg From {self.From}"
 
 class Conversation(models.Model):
     participants = models.ManyToManyField(User,related_name='participant')

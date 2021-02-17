@@ -18,20 +18,38 @@ def index(request):
 @login_required
 def messages(request):
     user = request.user
-    With = request.POST.get('WITH')
-    #WITH = User.objects.get(pk=With)
-    conv = Message.objects.filter(From=user)
-    conv = conv.union(Message.objects.filter(To=user))
-    #print(conv)
+    conv_id = request.POST.get('conv_id')
 
     con = Conversation.objects.filter(participants=user).order_by('-Last_Updated')
-    for each_con in con:
-        print(each_con.Messages.last())
+    if conv_id == "" or conv_id == None:
+        try:
+            latest = con[0].id
+        except IndexError:
+            latest = ""
+    else:
+        latest = int(conv_id)
+    if type(latest) is not str:
+        disp_msgs = Conversation.objects.get(pk=latest).Messages.order_by('-id')
+    else:
+        disp_msgs = None
+    return render(request,'chat/messages.html',{'all_conversations':con,'disp_msgs':disp_msgs})
+
+def send_message(request,convo_id):
+    if request.method == "PUT":
+
+        data = json.loads(request.body)
+        if not str(convo_id) == data['convoID']:
+            return JsonResponse({'Done':False})
+        newMsg = Message(From=request.user,Text=data['txt'])
+        newMsg.save()
+        conv = Conversation.objects.get(pk=convo_id)
+        conv.Messages.add(newMsg)
+        conv.save()
 
 
-    return render(request,'chat/messages.html',{'all_conversations':con})
+        return JsonResponse({'Done':True,'up_txt': newMsg.Text, 'up_ConvoID': conv.id})
 
-
+    return HttpResponseRedirect(reverse('index'))
 
 def login_view(request):
     if request.method == "POST":

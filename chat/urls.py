@@ -7,6 +7,7 @@ urlpatterns = [
     path('logout/',views.logout_view,name='logout'),
     path('register/',views.register,name='register'),
     path('chat/',views.messages,name='messages'),
+    path('send/<int:convo_id>',views.send_message,name='send_message'),
 
 
 ]
