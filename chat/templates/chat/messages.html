@@ -7,7 +7,9 @@
     <a class="text-center" href="#">Send a new message</a>
         {% for each_conv in all_conversations %}
 
-        <div class="card" style="width: 18rem;">
+        <form class="card" style="width: 18rem;" method="POST" onclick="this.submit()" action="{% url 'messages' %}">
+        {% csrf_token %}
+        <input name="conv_id" value="{{ each_conv.id }}" hidden></input>
   <div class="card-body">
 
     <h5 class="card-title">
@@ -20,7 +22,7 @@
     <p class="card-text">{{each_conv.Messages.last.Text |slice:":17" }} ...</p>
 
         </div>
-        </div>
+        </form>
 
 
 
@@ -36,7 +38,7 @@
 {% block conversation %}
     <div class="my-3" style="height: 70vh">
     <h4>
-        {% for participant_name in all_conversations.first.participants.all %}
+        {% for participant_name in disp_conv.participants.all %}
             {% if participant_name != user %}
             {{ participant_name.first_name }}
             {% endif %}
@@ -67,7 +69,7 @@
         <div class="container">
     <form class="d-flex">
 
-    <input type="text" id="{{ all_conversations.first.id }}" class="form-control msg" name="txt" placeholder="Write your text here">
+    <input type="text" id="{{ disp_conv.id }}" class="form-control msg" name="txt" placeholder="Write your text here">
     <button class="btn btn-primary" class="send" type="submit" style="border-radius: 100%;"><i class="fas fa-paper-plane"></i></button>
 
     </form>

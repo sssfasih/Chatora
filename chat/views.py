@@ -27,13 +27,22 @@ def messages(request):
         except IndexError:
             latest = ""
     else:
-        latest = int(conv_id)
-    if type(latest) is not str:
+        try:
+            latest = int(conv_id)
+        except ValueError:
+            latest = ""
+
+    if type(latest) is int:
         disp_msgs = Conversation.objects.get(pk=latest).Messages.order_by('-id')
+        disp_conv = disp_msgs.first().texts.get()
     else:
         disp_msgs = None
-    return render(request,'chat/messages.html',{'all_conversations':con,'disp_msgs':disp_msgs})
 
+
+
+    return render(request,'chat/messages.html',{'all_conversations':con,'disp_msgs':disp_msgs,'disp_conv':disp_conv})
+
+@login_required
 def send_message(request,convo_id):
     if request.method == "PUT":
 
