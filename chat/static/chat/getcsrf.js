@@ -1,3 +1,4 @@
+// Function taken from Django Documentation
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

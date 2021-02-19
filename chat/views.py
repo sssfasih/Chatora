@@ -15,10 +15,12 @@ def index(request):
         return HttpResponseRedirect(reverse('login'))
     return HttpResponseRedirect(reverse('messages'))
 
-@login_required
+
 def messages(request):
+    if request.user.is_anonymous:
+        return HttpResponseRedirect(reverse("index"))
     user = request.user
-    conv_id = request.POST.get('conv_id')
+    conv_id = request.GET.get('conv_id')
 
     con = Conversation.objects.filter(participants=user).order_by('-Last_Updated')
     if conv_id == "" or conv_id == None:
@@ -33,8 +35,11 @@ def messages(request):
             latest = ""
 
     if type(latest) is int:
-        disp_msgs = Conversation.objects.get(pk=latest).Messages.order_by('-id')
+        disp_msgs = Conversation.objects.get(pk=latest).Messages.order_by('id')
         disp_conv = disp_msgs.first().texts.get()
+        if request.user not in disp_conv.participants.all():
+            disp_conv = None
+            disp_msgs = None
     else:
         disp_msgs = None
 
@@ -49,9 +54,12 @@ def send_message(request,convo_id):
         data = json.loads(request.body)
         if not str(convo_id) == data['convoID']:
             return JsonResponse({'Done':False})
+        conv = Conversation.objects.get(pk=convo_id)
+        if request.user not in conv.participants.all():
+            return JsonResponse({'Done':False,'ERROR':'User trying to send msg in foreign conversation.'})
         newMsg = Message(From=request.user,Text=data['txt'])
         newMsg.save()
-        conv = Conversation.objects.get(pk=convo_id)
+        newMsg.Read_by.add(request.user)
         conv.Messages.add(newMsg)
         conv.save()
 
@@ -59,6 +67,44 @@ def send_message(request,convo_id):
         return JsonResponse({'Done':True,'up_txt': newMsg.Text, 'up_ConvoID': conv.id})
 
     return HttpResponseRedirect(reverse('index'))
+
+@login_required
+def get_updates(request):
+
+    if request.method == "POST":
+        user = request.user
+        updates = {}
+        cons = Conversation.objects.filter(participants=user)
+        for eachCon in cons:
+            lastMsg = eachCon.Messages.last()
+            if user not in lastMsg.Read_by.all():
+                #lastMsg.Read_by.add(user)
+                updates[eachCon.id]= lastMsg.Text
+
+                print("last msg not seen by user")
+        print(updates)
+        return JsonResponse(updates, safe=False)
+
+    elif request.method == "PUT":
+        print("PUT Request")
+        data = json.loads(request.body)
+        try:
+            convo_id = int(data['disp'])
+            convo = Conversation.objects.get(pk=convo_id)
+            if request.user not in convo.participants.all():
+                JsonResponse(['ERROR: Frontend sent wrong convo id'],safe=False)
+            new_msgs = []
+            msgs = convo.Messages.exclude(Read_by=request.user)
+            for loop in msgs:
+                new_msgs.append(loop.Text)
+                loop.Read_by.add(request.user)
+        except:
+            new_msgs = ["No new message"]
+
+        return JsonResponse(new_msgs,safe=False)
+
+    return HttpResponseRedirect(reverse('index'))
+
 
 def login_view(request):
     if request.method == "POST":
@@ -77,6 +123,8 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("index"))
         return render(request, "chat/login.html")
 
 
