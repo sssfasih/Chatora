@@ -9,6 +9,7 @@ urlpatterns = [
     path('chat/',views.messages,name='messages'),
     path('send/<int:convo_id>',views.send_message,name='send_message'),
     path('updates/',views.get_updates,name='get_updates'),
+    path('new/',views.new_msg,name='new_msg'),
 
 
 ]

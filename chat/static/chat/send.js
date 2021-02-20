@@ -28,11 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(jsonresponse => {
                 console.log(jsonresponse);
                 let msgs = document.querySelector('#messages')
-                msgs.innerHTML += `<div class="container my-3 text-white" style="text-align: right;">
-            <span class="bg-primary container py-2" style="border-radius: 50px;">${jsonresponse['up_txt']}</span>
-        </div>`;
+                msgs.innerHTML += `<div class="container" style="display: flex; flex-direction: row;">
+                        <div class="col"></div>
+                    <div class=" my-2 text-white bg-primary py-2" style="text-align: right; border-radius: 20px;">
+                        <span class="container">${jsonresponse['up_txt']}</span>
+                    </div>
+                    </div>`
+
                 msg.value = '';
                 scroll();
+                update();
 
 
             })

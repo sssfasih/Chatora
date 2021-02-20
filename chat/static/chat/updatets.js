@@ -47,15 +47,25 @@ function updateDisplay(current_disp){
         })
         .then(jsoned => {
             console.log(jsoned);
-            var display = document.querySelector("#messages");
+            var selff = document.querySelector('.selff').id;
+            selff = selff.slice(5,);
+            var display = document.querySelector("#messages")
             for (each_new_msg in jsoned){
-                console.log(display)
-            display.innerHTML += `<div class="container my-3 text-white">
-                <span class="bg-secondary container py-2" style="border-radius: 50px;">${jsoned[each_new_msg]}</span>
-            </div>`;
+                if (jsoned[each_new_msg][1] === parseInt(selff)){continue;}
+                console.log("&&&&&&&");
+                console.log(display);
+                console.log("&&&&&&&");
+            display.innerHTML += `<div class="container" style="display: flex; flex-direction: row;">
+
+                    <div class=" my-2 text-white bg-secondary py-2" style="text-align: left; border-radius: 20px;">
+                        <span class="container " style="">${jsoned[each_new_msg][0]}</span>
+                    </div>
+                    <div class="col"></div>
+                    </div>`;
+
             }
             scroll();
-            return jsoned
+            return jsoned;
         })
 
 }

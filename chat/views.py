@@ -15,6 +15,8 @@ def index(request):
         return HttpResponseRedirect(reverse('login'))
     return HttpResponseRedirect(reverse('messages'))
 
+def new_msg(request):
+    return render(request,'chat/new_msg.html')
 
 def messages(request):
     if request.user.is_anonymous:
@@ -59,7 +61,6 @@ def send_message(request,convo_id):
             return JsonResponse({'Done':False,'ERROR':'User trying to send msg in foreign conversation.'})
         newMsg = Message(From=request.user,Text=data['txt'])
         newMsg.save()
-        newMsg.Read_by.add(request.user)
         conv.Messages.add(newMsg)
         conv.save()
 
@@ -96,7 +97,7 @@ def get_updates(request):
             new_msgs = []
             msgs = convo.Messages.exclude(Read_by=request.user)
             for loop in msgs:
-                new_msgs.append(loop.Text)
+                new_msgs.append([loop.Text,loop.From.id])
                 loop.Read_by.add(request.user)
         except:
             new_msgs = ["No new message"]
