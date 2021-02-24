@@ -16,7 +16,21 @@ function update (){
             for (i in jsoned) {
                 console.log(i);
                 console.log(jsoned[i]);
-                document.querySelector("#lst-" + i).innerText = jsoned[i].slice(0, 17) + "...";
+                let txt = document.querySelector("#lst-" + i);
+                    if (txt === null){
+                        console.log("Text is undefined");
+                        document.querySelector('#all_messages').innerHTML += `<form class="card" style="" method="GET" onclick="this.submit()" action="/chat/">
+
+                            <input name="conv_id" value="${i}" hidden="">
+                            <div class="card-body">
+                                <h5 class="card-title">Someone</h5>
+                                <p class="card-text" id="lst-${i}"></p>
+                            </div>
+                        </form>`;
+                        txt = document.querySelector("#lst-" + i);
+
+                    }
+                    txt.innerText = jsoned[i].slice(0, 17) + "...";
 
 
             }

@@ -4,9 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from .models import User,Message,Conversation
+from .models import User, Message, Conversation
 import json
+
 
 # Create your views here.
 
@@ -15,8 +15,42 @@ def index(request):
         return HttpResponseRedirect(reverse('login'))
     return HttpResponseRedirect(reverse('messages'))
 
+
+@login_required
 def new_msg(request):
-    return render(request,'chat/new_msg.html')
+    aval_users = User.objects.all()
+    if request.method == 'GET':
+
+        return render(request, 'chat/new_msg.html', {'aval_users': aval_users})
+
+    elif request.method == "POST":
+        to = request.POST.get('to').strip()
+        txt = request.POST.get('txt').strip()
+        if to == request.user.username:
+            return render(request, 'chat/new_msg.html',
+                          {'aval_users': aval_users, 'error': "You Can not send Message to yourself."})
+
+        to_obj = User.objects.filter(username=to)
+
+        if not to_obj.exists():
+            return render(request, 'chat/new_msg.html',
+                          {'aval_users': aval_users, 'error': "No such user exists."})
+        users = []
+        for user in to_obj:
+            users.append(user)
+        users.append(request.user)
+
+        con = Conversation.objects.create()
+        con.participants.set(users)
+        newMsg = Message(From=request.user, Text=txt)
+        newMsg.save()
+        con.Messages.add(newMsg)
+        con.save()
+
+        print(con)
+
+        return HttpResponseRedirect(reverse('messages'))
+
 
 def messages(request):
     if request.user.is_anonymous:
@@ -38,6 +72,12 @@ def messages(request):
 
     if type(latest) is int:
         disp_msgs = Conversation.objects.get(pk=latest).Messages.order_by('id')
+        unread = Conversation.objects.get(pk=latest).Messages.exclude(Read_by=request.user)
+
+        for loop in unread:
+            loop.Read_by.add(request.user)
+            print(loop)
+
         disp_conv = disp_msgs.first().texts.get()
         if request.user not in disp_conv.participants.all():
             disp_conv = None
@@ -45,33 +85,32 @@ def messages(request):
     else:
         disp_msgs = None
 
+    return render(request, 'chat/messages.html',
+                  {'all_conversations': con, 'disp_msgs': disp_msgs, 'disp_conv': disp_conv})
 
-
-    return render(request,'chat/messages.html',{'all_conversations':con,'disp_msgs':disp_msgs,'disp_conv':disp_conv})
 
 @login_required
-def send_message(request,convo_id):
+def send_message(request, convo_id):
     if request.method == "PUT":
 
         data = json.loads(request.body)
         if not str(convo_id) == data['convoID']:
-            return JsonResponse({'Done':False})
+            return JsonResponse({'Done': False})
         conv = Conversation.objects.get(pk=convo_id)
         if request.user not in conv.participants.all():
-            return JsonResponse({'Done':False,'ERROR':'User trying to send msg in foreign conversation.'})
-        newMsg = Message(From=request.user,Text=data['txt'])
+            return JsonResponse({'Done': False, 'ERROR': 'User trying to send msg in foreign conversation.'})
+        newMsg = Message(From=request.user, Text=data['txt'])
         newMsg.save()
         conv.Messages.add(newMsg)
         conv.save()
 
-
-        return JsonResponse({'Done':True,'up_txt': newMsg.Text, 'up_ConvoID': conv.id})
+        return JsonResponse({'Done': True, 'up_txt': newMsg.Text, 'up_ConvoID': conv.id})
 
     return HttpResponseRedirect(reverse('index'))
 
+
 @login_required
 def get_updates(request):
-
     if request.method == "POST":
         user = request.user
         updates = {}
@@ -79,8 +118,8 @@ def get_updates(request):
         for eachCon in cons:
             lastMsg = eachCon.Messages.last()
             if user not in lastMsg.Read_by.all():
-                #lastMsg.Read_by.add(user)
-                updates[eachCon.id]= lastMsg.Text
+                # lastMsg.Read_by.add(user)
+                updates[eachCon.id] = lastMsg.Text
 
                 print("last msg not seen by user")
         print(updates)
@@ -93,16 +132,16 @@ def get_updates(request):
             convo_id = int(data['disp'])
             convo = Conversation.objects.get(pk=convo_id)
             if request.user not in convo.participants.all():
-                JsonResponse(['ERROR: Frontend sent wrong convo id'],safe=False)
+                JsonResponse(['ERROR: Frontend sent wrong convo id'], safe=False)
             new_msgs = []
             msgs = convo.Messages.exclude(Read_by=request.user)
             for loop in msgs:
-                new_msgs.append([loop.Text,loop.From.id])
+                new_msgs.append([loop.Text, loop.From.id])
                 loop.Read_by.add(request.user)
         except:
             new_msgs = ["No new message"]
 
-        return JsonResponse(new_msgs,safe=False)
+        return JsonResponse(new_msgs, safe=False)
 
     return HttpResponseRedirect(reverse('index'))
 
