@@ -1,0 +1,133 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block styles %}
+    <style>
+        @media (min-width: 992px) {
+            #all_messages {
+                flex-direction: column;
+            }
+            #main_container{
+                height:80vh
+            }
+        }
+
+        @media (max-width: 992px) {
+            #all_messages {
+                flex-direction: row;
+                /*background-color: sienna;*/
+                width: 200vh;
+
+
+            }
+            #main_container{
+
+                overflow-x: scroll;
+            }
+
+            .card {
+
+            }
+
+
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+    <div class="container-fluid row mt-2">
+        <div class="container col col-lg-2" style="outline: 2px dashed black">
+
+            <div id="main_container" class="text-center" style="">
+                <a class="text-center" href="{% url 'new_msg' %}">Send a new message</a>
+
+                <div class="" id="all_messages" style="height: inherit; overflow-y: auto; display: flex;">
+
+                    {% for each_conv in all_conversations %}
+
+                        <form class="card" style="" method="GET" onclick="this.submit()"
+                              action="{% url 'messages' %}">
+
+                            <input name="conv_id" value="{{ each_conv.id }}" hidden></input>
+                            <div class="card-body">
+
+                                <h5 class="card-title">
+                                    {% for participant_name in each_conv.participants.all %}
+                                        {% if participant_name != user %}
+                                            {{ participant_name.first_name }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </h5>
+                                <p class="card-text"
+                                   id="lst-{{ each_conv.id }}">{{ each_conv.Messages.last.Text |slice:":17" }} ...</p>
+
+                            </div>
+                        </form>
+
+
+
+                    {% endfor %}
+                </div>
+
+
+            </div>
+        </div>
+        <div class="container col-12 col-lg-10" style="outline: 2px dashed black; height: 88vh;">
+
+
+            <div class="my-3" style="height: 70vh">
+                <h4>
+                    {% for participant_name in disp_conv.participants.all %}
+                        {% if participant_name != user %}
+                            {{ participant_name.first_name }}
+                        {% endif %}
+                    {% endfor %}
+
+
+                </h4>
+                <div id="messages" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column; ">
+                    {% for eachMsg in disp_msgs %}
+
+                        {% if not eachMsg.From == user %}
+                            <div class="container" style="display: flex; flex-direction: row;">
+
+                                <div class=" my-2 text-white bg-secondary py-2"
+                                     style="text-align: left; border-radius: 20px;">
+                                    <span class="container " style="">{{ eachMsg.Text }}</span>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                        {% else %}
+                            <div class="container" style="display: flex; flex-direction: row;">
+                                <div class="col"></div>
+                                <div class=" my-2 text-white bg-primary py-2"
+                                     style="text-align: right; border-radius: 20px;">
+                                    <span class="container " style="">{{ eachMsg.Text }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+
+                <div class="container">
+                    <form class="d-flex" id="send">
+
+                        <input type="text" id="{{ disp_conv.id }}" class="form-control msg" name="txt"
+                               placeholder="Write your text here" autofocus>
+                        <button class="btn btn-primary" class="send" type="submit" style="border-radius: 100%;"><i
+                                class="fas fa-paper-plane"></i></button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'chat/getcsrf.js' %}"></script>
+    <script src="{% static 'chat/send.js' %}"></script>
+    <script src="{% static 'chat/updatets.js' %}"></script>
+
+{% endblock %}
