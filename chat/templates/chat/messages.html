@@ -1,11 +1,13 @@
 {% extends 'chat/base.html' %}
+{% load static %}
 {% block styles %}
     <style>
         @media (min-width: 992px) {
             #all_messages {
                 flex-direction: column;
-                width: auto;
-                overflow-x: auto;
+            }
+            #main_container{
+                height:80vh
             }
         }
 
@@ -13,12 +15,17 @@
             #all_messages {
                 flex-direction: row;
                 /*background-color: sienna;*/
-                height: auto;
+                width: 200vh;
 
+
+            }
+            #main_container{
+
+                overflow-x: scroll;
             }
 
             .card {
-                width: 200px;
+
             }
 
 
@@ -107,7 +114,7 @@
                     <form class="d-flex" id="send">
 
                         <input type="text" id="{{ disp_conv.id }}" class="form-control msg" name="txt"
-                               placeholder="Write your text here">
+                               placeholder="Write your text here" autofocus>
                         <button class="btn btn-primary" class="send" type="submit" style="border-radius: 100%;"><i
                                 class="fas fa-paper-plane"></i></button>
 
@@ -119,6 +126,8 @@
 {% endblock %}
 
 {% block js %}
-    <script></script>
+    <script src="{% static 'chat/getcsrf.js' %}"></script>
+    <script src="{% static 'chat/send.js' %}"></script>
+    <script src="{% static 'chat/updatets.js' %}"></script>
 
 {% endblock %}

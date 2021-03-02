@@ -1,4 +1,3 @@
-{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,18 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style>
         .bg-primary, .btn-primary, .bg-primary, .primary {
             background-color: blueviolet !important;
+            border-color: darkviolet;
         }
+        .form-control:focus,.btn-primary:focus {
+            border-color: blueviolet;
+            box-shadow: inset 0 1px 1px mediumvioletred, 0 0 8px darkviolet;
+        }
+
     </style>
     <title>{% block title %}Chatora{% endblock %}</title>
     {% block styles %}{% endblock %}
-    <script src="{% static 'chat/getcsrf.js' %}"></script>
-    <script src="{% static 'chat/send.js' %}"></script>
-    <script src="{% static 'chat/updatets.js' %}"></script>
+
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
 </head>
@@ -33,21 +35,24 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link active selff" href="#" id="self-{{ user.id }}">Home</a>
+    <div class="col-12">
+        <ul class="navbar-nav mr-auto d-flex">
+        {% with url_name=request.resolver_match.url_name %}
+            <li class="nav-item ">
+                <a class="nav-link selff {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}" id="self-{{ user.id }}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Let's Chat</a>
+                <a class="nav-link {% if url_name == 'messages' %}active{% endif %}" href="{% url 'messages' %}">Let's Chat</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">About Developer</a>
+                <a class="nav-link {% if url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About Developer</a>
             </li>
             {% if user.is_authenticated %}
-
-                <li class="nav-item text-right mr-4">
+                <div class="col text-right">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                 </li>
+                </div>
 
             {% else %}
 
@@ -59,13 +64,15 @@
                 </li>
 
             {% endif %}
-
+        {% endwith %}
         </ul>
+    </div>
     </div>
 </nav>
 
 {% block main %}
 {% endblock %}
+
 
 
 

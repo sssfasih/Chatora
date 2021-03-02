@@ -7,7 +7,7 @@
     <div class="card text-center container-fluid col-lg-5 col-12">
 
 
-        <form class="form form-control my-5" method="post" action="{% url 'new_msg' %}">
+        <form class="form my-5" method="post" action="{% url 'new_msg' %}">
             {% if error %}
                 <div>
                 <b class="text-danger ">{{ error }}</b>

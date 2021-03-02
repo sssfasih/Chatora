@@ -7,7 +7,7 @@ const csrftoken = getCookie('csrftoken');
 document.addEventListener('DOMContentLoaded', () => {
     scroll();
     document.querySelector("#send").onsubmit = function () {
-        console.log("Submitted");
+        //console.log("Submitted");
         let msg = document.querySelector('.msg')
         let txt = msg.value;
         let convoID = msg.id
@@ -26,7 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             })
             .then(jsonresponse => {
-                console.log(jsonresponse);
+
+                if (jsonresponse['Done'] === false){
+                    console.log(jsonresponse);
+                }
+                else{
                 let msgs = document.querySelector('#messages')
                 msgs.innerHTML += `<div class="container" style="display: flex; flex-direction: row;">
                         <div class="col"></div>
@@ -38,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 msg.value = '';
                 scroll();
                 update();
-
+                }
 
             })
         return false;

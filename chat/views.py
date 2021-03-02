@@ -35,6 +35,11 @@ def new_msg(request):
         if not to_obj.exists():
             return render(request, 'chat/new_msg.html',
                           {'aval_users': aval_users, 'error': "No such user exists."})
+
+        if txt == "":
+            return render(request, 'chat/new_msg.html',
+                          {'aval_users': aval_users, 'error': "You can not send a blank message."})
+
         users = []
         for user in to_obj:
             users.append(user)
@@ -94,6 +99,8 @@ def send_message(request, convo_id):
     if request.method == "PUT":
 
         data = json.loads(request.body)
+        if data['txt']=="":
+            return JsonResponse({'Done': False, 'ERROR': 'User trying to send a blank message.'})
         if not str(convo_id) == data['convoID']:
             return JsonResponse({'Done': False})
         conv = Conversation.objects.get(pk=convo_id)
@@ -144,6 +151,10 @@ def get_updates(request):
         return JsonResponse(new_msgs, safe=False)
 
     return HttpResponseRedirect(reverse('index'))
+
+def about(request):
+    return render(request,'chat/about.html')
+
 
 
 def login_view(request):
