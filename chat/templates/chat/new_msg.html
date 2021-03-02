@@ -19,7 +19,7 @@
             <div class="input-group">
 
                 <span class="input-group-text" id="at-symbol">@</span>
-                <input id="u" name="to" list="aval_users" class="form-control">
+                <input id="u" name="to" list="aval_users" class="form-control" autocomplete="off">
                 <datalist id="aval_users">
                     {% for eachUser in aval_users %}
                         <option value="{{ eachUser.username }}">{{ eachUser.first_name }}</option>
@@ -30,10 +30,10 @@
             <label for="txt">Message</label>
             <div class="input-group">
                 <textarea id='txt' name="txt" class="form-control" rows='3'
-                          placeholder="Enter your text here."></textarea>
+                          placeholder="Enter your text here." autocomplete="off"></textarea>
             </div>
 
-            <button class="btn btn-primary" type="submit">Send</button>
+            <button class="btn btn-primary mt-2" type="submit">Send</button>
 
         </form>
     </div>

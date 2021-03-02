@@ -88,6 +88,7 @@ def messages(request):
             disp_conv = None
             disp_msgs = None
     else:
+        disp_conv = None
         disp_msgs = None
 
     return render(request, 'chat/messages.html',
