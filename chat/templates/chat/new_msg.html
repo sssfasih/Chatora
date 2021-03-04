@@ -1,0 +1,41 @@
+{% extends 'chat/base.html' %}
+{% block styles %}
+
+{% endblock %}
+{% block main %}
+
+    <div class="card text-center container-fluid col-lg-5 col-12">
+
+
+        <form class="form my-5" method="post" action="{% url 'new_msg' %}">
+            {% if error %}
+                <div>
+                <b class="text-danger ">{{ error }}</b>
+                </div>
+            {% endif %}
+
+            {% csrf_token %}
+            <label for="u">To</label>
+            <div class="input-group">
+
+                <span class="input-group-text" id="at-symbol">@</span>
+                <input id="u" name="to" list="aval_users" class="form-control" autocomplete="off">
+                <datalist id="aval_users">
+                    {% for eachUser in aval_users %}
+                        <option value="{{ eachUser.username }}">{{ eachUser.first_name }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <label for="txt">Message</label>
+            <div class="input-group">
+                <textarea id='txt' name="txt" class="form-control" rows='3'
+                          placeholder="Enter your text here." autocomplete="off"></textarea>
+            </div>
+
+            <button class="btn btn-primary mt-2" type="submit">Send</button>
+
+        </form>
+    </div>
+
+{% endblock %}
