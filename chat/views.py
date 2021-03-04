@@ -52,7 +52,7 @@ def new_msg(request):
         con.Messages.add(newMsg)
         con.save()
 
-        print(con)
+        #print(con)
 
         return HttpResponseRedirect(reverse('messages'))
 
@@ -81,7 +81,7 @@ def messages(request):
 
         for loop in unread:
             loop.Read_by.add(request.user)
-            print(loop)
+            #print(loop)
 
         disp_conv = disp_msgs.first().texts.get()
         if request.user not in disp_conv.participants.all():
@@ -127,14 +127,14 @@ def get_updates(request):
             lastMsg = eachCon.Messages.last()
             if user not in lastMsg.Read_by.all():
                 # lastMsg.Read_by.add(user)
-                updates[eachCon.id] = lastMsg.Text
+                updates[eachCon.id] = [lastMsg.Text,lastMsg.From.first_name]
 
-                print("last msg not seen by user")
-        print(updates)
+                #print("last msg not seen by user")
+        #print(updates)
         return JsonResponse(updates, safe=False)
 
     elif request.method == "PUT":
-        print("PUT Request")
+        #print("PUT Request")
         data = json.loads(request.body)
         try:
             convo_id = int(data['disp'])

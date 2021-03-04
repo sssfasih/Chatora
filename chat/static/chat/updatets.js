@@ -23,14 +23,14 @@ function update (){
 
                             <input name="conv_id" value="${i}" hidden="">
                             <div class="card-body">
-                                <h5 class="card-title">Someone</h5>
+                                <h5 class="card-title">${jsoned[i][1]}</h5>
                                 <p class="card-text" id="lst-${i}"></p>
                             </div>
                         </form>`;
                         txt = document.querySelector("#lst-" + i);
 
                     }
-                    txt.innerText = jsoned[i].slice(0, 17) + "...";
+                    txt.innerText = jsoned[i][0].slice(0, 17) + "...";
 
 
             }
@@ -43,7 +43,7 @@ function update (){
                 updateDisplay(current_disp);
 
             }
-            setTimeout(update, 6000); // try again in 6 secs
+            setTimeout(update, 4000); // try again in 4 secs
         })
 }
 
